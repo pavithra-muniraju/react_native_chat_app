@@ -1,121 +1,186 @@
-import { useRouter } from "expo-router";
-import { useContext, useState } from "react";
-import { Alert, Dimensions, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { GlobalContext } from "../providers/GlobalContext";
-import { SafeAreaView } from "react-native-safe-area-context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+    StyleSheet,
+    Text,
+    View,
+    ScrollView, 
+    TextInput,
+    TouchableOpacity,
+    Alert,
+    Platform,
+    Dimensions
+} from 'react-native';
+import { GlobalContext } from '../providers/GlobalContext';
+import { useRouter } from 'expo-router';
+import { useState, useContext } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const boundedHeight = Dimensions.get('window').height;
 
-const windowHeight = Dimensions.get('window').height;
-function Login() {
-
-    const { setIsLoggedIn } = useContext(GlobalContext)
+const Login = () => {
+    const {setIsLoggedIn} = useContext(GlobalContext);
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
-
     const router = useRouter();
 
     const cancelLogin = () => {
-        router.replace("/")
-    }
+        router.replace('/');
+    };
 
-    const registerUser = () => {
-        router.push("/Register");
-    }
+    const createAccount = () => {
+        router.push('/Register');
+    };
 
     const loginUser = () => {
-        if (!userName) {
-            Alert.alert('Please enter the username');
+        if ( !userName ) {
+            Alert.alert('Please enter your username');
         }
-        else if (!password) {
-            Alert.alert('Please enter the password');
-        } else {
-            AsyncStorage.getItem('userLoggedIn', (err, res) => {
-                if (res != 'none') {
-                    Alert.alert('Someone already Logged in');
-                    router.replace("/");
-                } else {
-                    AsyncStorage.getItem(userName, (err, res) => {
-                        if (res != null) {
-                            if (res != password) {
-                                Alert.alert('Invalid password');
-                            } else {
+        else if ( !password) {
+            Alert.alert('Please enter a password');
+        }
+        else {
+            AsyncStorage.getItem('userLoggedIn', (err, result) => {
+                if (result !== 'none') {
+                    Alert.alert('Someone already logged in');
+                    router.replace('/');
+                }
+                else {
+                    AsyncStorage.getItem(userName, (err, result) => {
+                        if(result !== null) {
+                            if(result !== password) {
+                                Alert.alert('Password Incorrect');
+                            }
+                            else {
                                 AsyncStorage.setItem('userLoggedIn', userName, () => {
                                     setIsLoggedIn(true);
-                                    router.replace('/');
-                                    Alert.alert('User logged in successfully');
-                                })
+                                    router.push('/');
+                                });
                             }
-                        } else {
-                            Alert.alert(`${userName} does not exits`);
                         }
-                    })
+                        else {
+                            Alert.alert(`No account for ${userName}`);
+                        }
+                    });
                 }
-            })
-        }
+            });
+        }    
+    };
 
-
-    }
-    return (
-        <SafeAreaView>
-            <View style={styles.container} >
-                <ScrollView style={styles.formView}>
-                    <Text style={styles.title}>Login</Text>
-                    <Text style={styles.label}>User Name :</Text>
-                    <TextInput value={userName} style={styles.input} onChange={setUserName} placeholder="Enter user name" />
-                    <Text style={styles.label}>Password :</Text>
-                    <TextInput value={password} style={styles.input} onChange={setPassword} placeholder="Enter password" />
-                    <View style={styles.buttons}>
-                        <TouchableOpacity onPress={loginUser}><Text style={styles.login}>Login</Text></TouchableOpacity>
-                        <TouchableOpacity onPress={registerUser}><Text style={styles.register}>Register User</Text></TouchableOpacity>
-                        <TouchableOpacity onPress={cancelLogin}><Text style={styles.cancel}>Cancel Login</Text></TouchableOpacity>
-
-                    </View>
-                </ScrollView>
-
-            </View>
-        </SafeAreaView>
-    )
-}
-
-export default Login;
+    return(
+        <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.formView}>
+                <Text style={styles.formTitle}>LOGIN TO CHAT</Text>
+                <Text style={styles.formLabel}>Username</Text>
+                <TextInput 
+                    style={styles.formInput}
+                    onChangeText={setUserName}
+                    value={userName}
+                    placeholder='Enter Username'
+                />
+                <Text style={styles.formLabel}>Password</Text>
+                <TextInput 
+                    style={styles.formInput}
+                    onChangeText={setPassword}
+                    value={password}
+                    placeholder='Enter Password'
+                    secureTextEntry={true}
+                />
+                <TouchableOpacity onPress={loginUser}>
+                    <Text style={styles.formButtonLabel}>LOGIN</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={cancelLogin}>
+                    <Text style={styles.formButtonLabel}>CANCEL LOGIN</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={createAccount}>
+                    <Text style={styles.formButtonLabel}>CREATE ACCOUNT</Text>
+                </TouchableOpacity>
+            </ScrollView>
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
-
     container: {
-        height: windowHeight,
-        paddingBottom: 60
+        height: boundedHeight,
+        ...Platform.select({
+            android: { 
+                paddingBottom: 160
+            },
+            ios: { 
+                paddingBottom: 160
+            },
+            default:{
+                paddingBottom: 20
+            }
+        }),
     },
     formView: {
         alignItems: 'center'
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        paddingVertical: 10
+    formTitle: {
+        ...Platform.select({
+            android: {
+                fontSize: 20,
+                paddingVertical: 10 
+            },
+            ios: {
+                fontSize: 20,
+                paddingVertical: 10 
+            },
+            default: {
+                fontSize: 30,
+                paddingVertical: 20 
+            }
+        })
     },
-    label: {
-        fontSize: 18,
-        paddingTop: 10
+    formLabel: {
+        ...Platform.select({
+            android: {
+                fontSize: 16,
+                paddingTop: 10
+            },
+            ios: {
+                fontSize: 16,
+                paddingTop: 10
+            },
+            default: {
+                fontSize: 24,
+                paddingTop: 18
+            }
+        })
     },
-    input: {
+    formInput: {
         width: 250,
-        height: 70,
         borderWidth: 1,
-        padding: 10
+        padding: 10,
+        ...Platform.select({
+            android: {
+                fontSize: 16,
+            },
+            ios: {
+                fontSize: 16,
+            },
+            default: {
+                fontSize: 24,
+                width: 400
+            }
+        })
     },
-    buttons: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    login: {
-        color: 'green'
-    },
-    register: {
-        color: 'blue',
-    },
-    cancel: {
-        color: 'red'
+    formButtonLabel: {
+        ...Platform.select({
+            android: {
+                fontSize: 16,
+                paddingTop: 12
+            },
+            ios: {
+                fontSize: 16,
+                paddingTop: 12
+            },
+            default: {
+                fontSize: 24,
+                paddingTop: 20
+            }
+        })
     }
-})
+});
+
+export default Login;

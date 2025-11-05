@@ -1,69 +1,72 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
-import { createContext, useState } from "react";
-import { Alert } from "react-native";
+import {createContext, useState} from 'react';
+import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 
 export const GlobalContext = createContext(null);
 
-export const GlobalProvider = (props) => {
+export const GlobalProvider = (props) =>  {
     const router = useRouter();
-
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [loggedInUser, setLoggedInUser] = useState('');
+    const [loggedUser, setLoggedUser] = useState('');
 
     const toggleLogin = () => {
         if (isLoggedIn) {
             AsyncStorage.setItem('userLoggedIn', 'none', () => {
                 setIsLoggedIn(false);
-                setLoggedInUser('');
-                Alert.alert('user logged out');
+                setLoggedUser('');
+                Alert.alert('User logged out');
             })
-        } else {
-            router.push('/Login');
         }
-    }
+        else {
+            router.push('/Login');
+        }    
+    };
 
-    const getLoggedInUser = () => {
-        AsyncStorage.getItem('userLoggedIn', (err, res) => {
-            if (res === 'none') {
-                console.log('no user logged in');
-            } else if (res === null) {
-                AsyncStorage.setItem('userLoggedIn', 'none', () => {
-                    console.log('user intialized to none');
-                })
-            } else {
-                setIsLoggedIn(true);
-                setLoggedInUser(res);
-                console.log('logged in user: ' + res);
+    const getUser = () => {
+        AsyncStorage.getItem('userLoggedIn', (err, result) => {
+            if (result==='none') {
+                console.log('No one logged in');
             }
-
-        })
-    }
+            else if (result===null) {
+                AsyncStorage.setItem('userLoggedIn', 'none', () => {
+                    console.log('Set user to NONE');
+                });
+            }
+            else {
+                setIsLoggedIn(true);
+                setLoggedUser(result);
+                console.log('Logged in user: ',loggedUser);
+            } 
+        });    
+    };
 
     const getChatUser = () => {
-        AsyncStorage.getItem('userLoggedIn', (err, res) => {
-            if (res === 'none') {
-                console.log('no user logged in');
-                Alert.alert('Please log in to the chat');
-                router.push('./Login')
-            } else {
-                console.log('chat user: ' + res);
+        AsyncStorage.getItem('userLoggedIn', (err, result) => {
+            if (result==='none') {
+                console.log('No one logged in');
+                Alert.alert('You need to Login to Chat');
+                router.push('/Login');
             }
-        })
-    }
+            else {
+                console.log('logged in user: ', loggedUser)
+            }
+        });    
+    };
 
     return (
-        <GlobalContext.Provider
+        <GlobalContext.Provider 
             value={{
                 toggleLogin,
-                getChatUser,
-                isLoggedIn,
-                setIsLoggedIn,
-                loggedInUser,
-                setLoggedInUser
+                getUser, 
+                isLoggedIn, 
+                setIsLoggedIn, 
+                loggedUser,
+	            getChatUser,
             }}
         >
-            {props.childres}
+          {props.children}
         </GlobalContext.Provider>
-    )
-}
+      );
+
+};

@@ -8,10 +8,10 @@ function Header() {
 
     const router = useRouter();
 
-    const {toggleLogin, getChatUser, isLoggedIn} = useContext(GlobalContext);
+    const {toggleLogin, getUser, isLoggedIn} = useContext(GlobalContext);
 
     useEffect(() => {
-        getChatUser();
+        getUser();
         
     }, [isLoggedIn])
 

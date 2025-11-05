@@ -1,93 +1,180 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
-import { useState } from "react";
-import { TouchableOpacity } from "react-native";
-import { Alert, Dimensions, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+    StyleSheet,
+    Text,
+    View,
+    ScrollView,
+    TextInput,
+    TouchableOpacity,
+    Alert,
+    Dimensions, 
+    Platform
+} from 'react-native';
+import { useState } from 'react';
+import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const windowHeight = Dimensions.get('window').height;
-function Register() {
+const boundedHeight = Dimensions.get('window').height;
+
+const Register = () => {
     const router = useRouter();
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
 
     const cancelRegistration = () => {
-        router.push("/");
-    }
+        router.replace('/');
+    };
 
     const registerUser = () => {
-        if (!userName) {
-            Alert.alert('Please enter the username');
+        if ( !userName ){
+            Alert.alert('Please enter a username');
         }
-        else if (!password) {
-            Alert.alert('Please enter the password');
+        else if ( !password ){
+            Alert.alert('Please enter a password!');
         }
-        else if (!passwordConfirm) {
-            Alert.alert('Please confirm the password');
+        else if ( !passwordConfirm ){
+            Alert.alert('Please confirm your password!');
         }
-        else if (password !== passwordConfirm) {
-            Alert.alert('Password do not match');
-        } else {
-            AsyncStorage.getItem(userName, (err, res) => {
-                if(res !== null) {
-                    Alert.alert('USer name alredt registerd');                    
-                } else {
-                    AsyncStorage.setItem(userName, password, () => {
-                        Alert.alert('Account created for the user' + userName);
-                    });
-                    router.replace("/");
+        else if ( password !== passwordConfirm ){
+            Alert.alert('Passwords do not match!');
+        }
+        else {
+            AsyncStorage.getItem(userName, (err, result) => {
+                if ( result !== null ){
+                    Alert.alert(`${userName} already registered`);
                 }
-            })
-        }
-    }
+                else {
+                    AsyncStorage.setItem(userName, password, () => {
+                        Alert.alert(`Account created for ${userName}`);
+                    });
+                    router.replace('/');
+                }
+            });    
+        }    
+    };
 
-    return (
+    return(
         <View style={styles.container}>
-            <ScrollView style={styles.formView}>
-                <Text style={styles.title}>User Registration</Text>
-                <Text style={styles.label}>User Name :</Text>
-                <TextInput value={userName} style={styles.input} onChange={setUserName} placeholder="Enter user name" />
-                <Text style={styles.label}>Password :</Text>
-                <TextInput value={password} style={styles.input} onChange={setPassword} placeholder="Enter password" />
-                <Text style={styles.label}>Confirm Password :</Text>
-                <TextInput value={passwordConfirm} style={styles.input} onChange={setPasswordConfirm} placeholder="Confirm Password" secureTextEntry={true} />
-            
-                <TouchableOpacity onPress={registerUser} ><Text style={styles.register}>Register the Account</Text></TouchableOpacity>
-                <TouchableOpacity onPress={cancelRegistration} ><Text style={styles.cancel}>Cancel Registration</Text></TouchableOpacity>
-            </ScrollView>
+            <ScrollView contentContainerStyle={styles.formView}>
+                <Text style={styles.formTitle}>REGISTER AN ACCOUNT</Text>
+                <Text style={styles.formLabel}>Username</Text>
+                <TextInput 
+                    style={styles.formInput}
+                    onChangeText={setUserName}
+                    value={userName}
+                    placeholder='Enter Username'
+                />
+                <Text style={styles.formLabel}>Password</Text>
+                <TextInput 
+                    style={styles.formInput}
+                    onChangeText={setPassword}
+                    value={password}
+                    placeholder='Enter Password'
+                    secureTextEntry={true}
+                />
+                <Text style={styles.formLabel}>Confirm Password</Text>
+                <TextInput 
+                    style={styles.formInput}
+                    onChangeText={setPasswordConfirm}
+                    value={passwordConfirm}
+                    placeholder='Confirm your password'
+                    secureTextEntry={true}
+                />
+                <TouchableOpacity onPress={registerUser}>
+                    <Text style={styles.formButtonLabel}>REGISTER ACCOUNT</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={cancelRegistration}>
+                    <Text style={styles.formButtonLabel}>CANCEL</Text>
+                </TouchableOpacity>
+            </ScrollView>    
         </View>
-    )
-}
+    );
 
-export default Register;
+};
 
-const styles= StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
-        height: windowHeight,
-        paddingBottom: 60
+        height: boundedHeight,
+        ...Platform.select({
+            android: { 
+                paddingBottom: 360
+            },
+            ios: { 
+                paddingBottom: 160
+            },
+            default:{
+                paddingBottom: 20
+            }
+        }),
     },
     formView: {
         alignItems: 'center'
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        paddingVertical: 10
+    formTitle: {
+        ...Platform.select({
+            android: {
+                fontSize: 20,
+                paddingVertical: 10 
+            },
+            ios: {
+                fontSize: 20,
+                paddingVertical: 10 
+            },
+            default: {
+                fontSize: 30,
+                paddingVertical: 20 
+            }
+        })
     },
-    label: {
-        fontSize: 18,
-        paddingTop: 10
+    formLabel: {
+        ...Platform.select({
+            android: {
+                fontSize: 16,
+                paddingTop: 10
+            },
+            ios: {
+                fontSize: 16,
+                paddingTop: 10
+            },
+            default: {
+                fontSize: 24,
+                paddingTop: 18
+            }
+        })
     },
-    input: {
+    formInput: {
         width: 250,
-        height: 70,
         borderWidth: 1,
-        padding: 10
-    }, 
-    register: {
-        color: 'blue',
+        padding: 10,
+        ...Platform.select({
+            android: {
+                fontSize: 16,
+            },
+            ios: {
+                fontSize: 16,
+            },
+            default: {
+                fontSize: 24,
+                width: 400
+            }
+        })
     },
-    cancel: {
-        color: 'red'
+    formButtonLabel: {
+        ...Platform.select({
+            android: {
+                fontSize: 16,
+                paddingTop: 12
+            },
+            ios: {
+                fontSize: 16,
+                paddingTop: 12
+            },
+            default: {
+                fontSize: 24,
+                paddingTop: 20
+            }
+        })
     }
-})
+});
+
+export default Register;
