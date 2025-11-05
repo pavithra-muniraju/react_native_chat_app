@@ -1,14 +1,29 @@
 import { Image, StyleSheet, Text, View } from "react-native";
+import { FontAwesome6  } from '@expo/vector-icons';
+import { useRouter } from "expo-router";
+import { useContext, useEffect } from "react";
+import { GlobalContext } from "../providers/GlobalContext";
 
 function Header() {
-    const userDisplay = "Pavi"
+
+    const router = useRouter();
+
+    const {toggleLogin, getChatUser, isLoggedIn} = useContext(GlobalContext);
+
+    useEffect(() => {
+        getChatUser();
+        
+    }, [isLoggedIn])
+
+
+    const userDisplay = isLoggedIn? <FontAwesome6 name="user-circle" size={24} color="black" /> :  <FontAwesome6 name="user-circle" size={24} color="blue" /> ;
     return (
         <View style={styles.header}>
             <Image source={require("../assets/facet.jpg")} style={styles.image} />
             <Text style={styles.menu}>Brands</Text>
             <Text style={styles.menu}>Globochat</Text>
-            <Text style={styles.menu}>Register</Text>
-            <Text style={styles.menu}>{userDisplay}</Text>
+            <Text style={styles.menu} onPress={()=> router.push("/Register")}>Register</Text>
+            <Text style={styles.menu} onPress={toggleLogin}>{userDisplay}</Text>
         </View>
     )
 }

@@ -1,8 +1,9 @@
-import { Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 function Home() {
     return( 
         <View>
+            <Text>Home Page</Text>
             <Image source={require("../assets/wallpaperflare.com_wallpaper_old.jpg")} style={styles.backImage}/>
         </View>
     )
