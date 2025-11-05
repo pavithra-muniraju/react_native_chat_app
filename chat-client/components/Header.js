@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 function Header() {
     const userDisplay = "Pavi"
     return (
-        <View>
+        <View style={styles.header}>
             <Image source={require("../assets/facet.jpg")} style={styles.image} />
             <Text style={styles.menu}>Brands</Text>
             <Text style={styles.menu}>Globochat</Text>
@@ -17,17 +17,16 @@ export default Header;
 
 const styles = StyleSheet.create({
     header: {
-        alignItems: 'center',
         backgroundColor: '#2121221',
-        height: 120,
-        width: '100%',
+        height: 70,
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingHorizontal: 5
+        alignItems: 'center',
+    justifyContent: 'space-between',
+        paddingHorizontal: 5,
     },
     image: {
-        width: '100%',
-        height: 150,
+        width: 50,
+        height: 50,
         resizeMode: 'stretch'
     },
     menu: {

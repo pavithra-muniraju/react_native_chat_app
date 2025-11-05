@@ -19,9 +19,10 @@ export default Footer;
 const styles = StyleSheet.create({
     footer: {
     alignItems: 'center',
-    justifyContent: "center",
+    justifyContent: 'space-between',
     borderWidth: 1,
-    width: '100%',
+
+    width: 'auto',
     flexDirection: 'row',
     ...Platform.select({
         android: {
@@ -32,17 +33,19 @@ const styles = StyleSheet.create({
             position: 'relative',
             bottom: 0,
         }
-    })
+    }),
+    paddingBottom: 20
     },
     image: {
-        height: 20,
-        width: '100%',
+        height: 70,
+        width: 70,
         paddingHorizontal: 5
     },
 
     menu: {
         paddingLeft: 25,
-        paddingRight: 25
+        paddingRight: 25,
+        paddingBottom:20
     }
 })
 
