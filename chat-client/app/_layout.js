@@ -1,19 +1,19 @@
 import { Slot } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { GlobalProvider } from '../providers/GlobalContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { GlobalProvider } from '../providers/GlobalContext';
 
-
-export default function Layout() {
-    return (
+const Layout = () => {
+    return(
         <GlobalProvider>
             <SafeAreaView>
                 <Header />
                 <Slot />
-                <Footer />
+                <Footer />    
             </SafeAreaView>
         </GlobalProvider>
+    );    
+};
 
-    );
-}
+export default Layout;
