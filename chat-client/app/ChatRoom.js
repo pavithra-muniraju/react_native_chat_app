@@ -65,7 +65,7 @@ function ChatRoom() {
             <View>
                 <Text>Your Message:</Text>
                 <TextInput value={userMessage} onChangeText={setUSerMessage} style={styles.input}/>
-                <TouchableOpacity onPress={() => sendPost}><Text>Send Message</Text></TouchableOpacity>
+                <TouchableOpacity onPress={sendPost}><Text>Send Message</Text></TouchableOpacity>
             </View>
         </View>
     )
