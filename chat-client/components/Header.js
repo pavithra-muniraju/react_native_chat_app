@@ -21,7 +21,7 @@ function Header() {
         <View style={styles.header}>
             <Image source={require("../assets/facet.jpg")} style={styles.image} />
             <Text style={styles.menu}>Brands</Text>
-            <Text style={styles.menu}>Globochat</Text>
+            <Text style={styles.menu} onPress={() => router.push('/Chat')}>Globochat</Text>
             <Text style={styles.menu} onPress={()=> router.push("/Register")}>Register</Text>
             <Text style={styles.menu} onPress={toggleLogin}>{userDisplay}</Text>
         </View>

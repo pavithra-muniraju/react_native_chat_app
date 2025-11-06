@@ -1,6 +1,18 @@
 import { Image, StyleSheet, Text, View } from "react-native";
+import { GlobalContext } from "../providers/GlobalContext";
+import { useContext } from "react";
+import { useEffect } from "react";
 
 function Home() {
+    const {isConnected, chatDisconnect} = useContext(GlobalContext);
+    useEffect(() => {
+        if(isConnected) {
+            console.log("Disconnecting from chat server");
+            chatDisconnect();
+        } else {
+            console.log("Not connected to chat server");
+        }
+    },[])
     return( 
         <View>
             <Text>Home Page</Text>
