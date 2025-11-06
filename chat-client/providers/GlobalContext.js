@@ -109,6 +109,7 @@ export const GlobalProvider = (props) =>  {
     }
 
     const handleChatMessages = (value) => {
+        console.log(value)
         getChatMessages(value)
     }
 
